@@ -11,4 +11,9 @@ func routes(_ app: Application) throws {
     }
 
     try app.register(collection: TodoController())
+    try app.register(collection: ParentController())
+    try app.register(collection: EnfantController())
+    try app.register(collection: TaskController())
+    try app.register(collection: GrossesseController())
+    try app.register(collection: ArticleController())
 }
