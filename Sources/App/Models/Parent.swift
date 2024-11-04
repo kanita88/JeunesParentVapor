@@ -35,4 +35,33 @@ final class Parent: Model, Content, @unchecked Sendable {
     
     // Constructeur vide requis par Fluent
     init() {}
+    
+    init(id: UUID? = nil, nom: String, prenom: String, password: String, date_de_naissance: Date, email: String, premiere_experience: String) {
+            self.id = id
+            self.nom = nom
+            self.prenom = prenom
+            self.password = password
+            self.date_de_naissance = date_de_naissance
+            self.email = email
+            self.premiere_experience = premiere_experience
+            
+            
+        }
+    
+    func toDTO () -> ParentDTO {
+        .init(
+            id: self.id,
+            email: self.$email.value!!
+        )
+    }
 }
+
+//// Extension pour la conformité à ModelAuthenticatable
+//extension Parent: ModelAuthenticatable {
+//    static let usernameKey = \Parent.$email
+//    static let passwordHashKey = \Parent.$password
+//    
+//    func verify(password: String) throws -> Bool {
+//        try Bcrypt.verify(password, created: self.password!)
+//    }
+//}

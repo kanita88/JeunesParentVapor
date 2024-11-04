@@ -2,6 +2,7 @@ import NIOSSL
 import Fluent
 import FluentMySQLDriver
 import Vapor
+import JWT
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -19,4 +20,17 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(CreateTodo())
     // register routes
     try routes(app)
+    
+    // Récupération de la clé secrète depuis les variables d'environnement
+    guard let secret = Environment.get("SECRET_KEY"), !secret.isEmpty else {
+            fatalError("SECRET_KEY is missing or empty in the environment variables.")
+        }
+    
+    // Création de la clé HMAC avec la clé secrète
+    let hmacKey = HMACKey(from: Data(secret.utf8))
+    
+    // Ajout de la clé HMAC à la configuration JWT avec l'algorithme SHA-256
+    await app.jwt.keys.add(hmac: hmacKey, digestAlgorithm: .sha256)
+    
+    //print(hmacKey)
 }
