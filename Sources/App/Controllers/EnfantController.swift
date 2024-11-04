@@ -20,13 +20,13 @@ struct EnfantController: RouteCollection {
             enfant.delete(use: deleteChild)
             enfant.put(use: updateChild)
         }
-        enfants.post("login") { req -> EventLoopFuture<Response> in
-            // Décoder directement le modèle Parent depuis le corps de la requête
-            let parent = try req.content.decode(Parent.self)
-            
-            // Appeler la fonction d'authentification
-            return authenticateParent(req: req, parent: parent)
-        }
+//        enfants.post("login") { req -> EventLoopFuture<Response> in
+//            // Décoder directement le modèle Parent depuis le corps de la requête
+//            let parent = try req.content.decode(ParentUser.self)
+//            
+//            // Appeler la fonction d'authentification
+//            return authenticateParent(req: req, parent: parent)
+//        }
     }
 }
 

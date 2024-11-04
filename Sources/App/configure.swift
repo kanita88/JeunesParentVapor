@@ -18,6 +18,7 @@ public func configure(_ app: Application) async throws {
     ), as: .mysql)
 
     app.migrations.add(CreateTodo())
+    //app.middleware.use(Parent.authenticator())
     // register routes
     try routes(app)
     

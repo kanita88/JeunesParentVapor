@@ -18,7 +18,7 @@ struct TokenSession: Content, Authenticatable, JWTPayload {
     var parentId: UUID
 
     // Initialisation avec un utilisateur
-    init(with parent: Parent) throws {
+    init(with parent: ParentUser) throws {
         self.parentId = try parent.requireID()
         self.expiration = ExpirationClaim(value: Date().addingTimeInterval(expirationTime))
     }
