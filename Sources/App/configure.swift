@@ -18,15 +18,23 @@ public func configure(_ app: Application) async throws {
     ), as: .mysql)
 
     app.migrations.add(CreateTodo())
-    //app.middleware.use(Parent.authenticator())
-    // register routes
-    try routes(app)
+    
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .all,
+        allowedMethods: [.GET, .POST, .PUT, .DELETE, .OPTIONS],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin],
+        cacheExpiration: 800
+    )
+
+    let corsMiddleware = CORSMiddleware(configuration: corsConfiguration)
+    // Add the CORS middleware to the application
+    app.middleware.use(corsMiddleware)
+    
     
     // Récupération de la clé secrète depuis les variables d'environnement
     guard let secret = Environment.get("SECRET_KEY"), !secret.isEmpty else {
             fatalError("SECRET_KEY is missing or empty in the environment variables.")
         }
-    
     // Création de la clé HMAC avec la clé secrète
     let hmacKey = HMACKey(from: Data(secret.utf8))
     
@@ -34,4 +42,7 @@ public func configure(_ app: Application) async throws {
     await app.jwt.keys.add(hmac: hmacKey, digestAlgorithm: .sha256)
     
     //print(hmacKey)
+    
+    // register routes
+    try routes(app)
 }
