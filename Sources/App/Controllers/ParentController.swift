@@ -26,8 +26,9 @@ import JWT
             //parents.post(use: create)
             
             authGroup.post("login", use : login )
-            parents.post(use: create) //créer mdp haché
-            token.get(use: index)
+            parents.post(use: create) //créer mdp haché et envoi token
+            token.get(use: index) // il faut le token pour se connecter à index
+            //authGroup.get(use: index)
 
             
             parents.group("byemail") { parent in
