@@ -2,16 +2,13 @@
 //  ParentDTO.swift
 //  JeunesParentVapor
 //
-//  Created by Apprenant 142 on 05/11/2024.
+//  Created by Apprenant 172 on 04/11/2024.
 //
 
-import Vapor
 import Fluent
+import Vapor
 
 struct ParentDTO: Content {
     var id: UUID?
-    var email: String?
-    
+    var email: String
 }
-
-

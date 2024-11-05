@@ -4,13 +4,13 @@
 //
 //  Created by Apprenant 172 on 18/10/2024.
 //
-import Foundation
+
 import Vapor
 import Fluent
 
 final class ParentUser: Model, Content, @unchecked Sendable {
     
-    static let schema = "parents" // Nom de la table MySQL
+    static let schema = "parent" // Nom de la table MySQL
     
     @ID(key: .id) //@ID(custom: "id")
     var id: UUID?
@@ -21,7 +21,7 @@ final class ParentUser: Model, Content, @unchecked Sendable {
     @Field(key: "prenom")
     var prenom: String?
     
-    @Field(key: "password")  // Nom du champ pour le mot de passe chiffré
+    @Field(key: "password")
     var password: String
     
     @Field(key: "date_de_naissance")
@@ -43,25 +43,24 @@ final class ParentUser: Model, Content, @unchecked Sendable {
         self.password = password
         self.date_de_naissance = date_de_naissance
         self.email = email
-    self.premiere_experience = premiere_experience
-}
-   
-    func toDTO() -> ParentDTO {
+        self.premiere_experience = premiere_experience
+        
+    }
+    
+    func toDTO () -> ParentDTO {
         .init(
             id: self.id,
             email: self.email
         )
     }
-
-    
 }
 
-extension ParentUser: ModelAuthenticatable {
-    
-    static let usernameKey = \ParentUser.$email
-    static let passwordHashKey = \ParentUser.$password  // Clé pour le mot de passe chiffré
-    
-    func verify(password: String) throws -> Bool {
-        try Bcrypt.verify(password, created: self.password)
+    // Extension pour la conformité à ModelAuthenticatable
+    extension ParentUser: ModelAuthenticatable {
+        static let usernameKey = \ParentUser.$email
+        static let passwordHashKey = \ParentUser.$password
+        
+        func verify(password: String) throws -> Bool {
+            try Bcrypt.verify(password, created: self.password)
+        }
     }
-}

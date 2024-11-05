@@ -26,8 +26,9 @@ import JWT
             //parents.post(use: create)
             
             authGroup.post("login", use : login )
-            parents.post(use: create) //créer mdp haché
-            token.get(use: index)
+            parents.post(use: create) //créer mdp haché et envoi token
+            token.get(use: index) // il faut le token pour se connecter à index
+            //authGroup.get(use: index)
 
             
             parents.group("byemail") { parent in
@@ -43,7 +44,7 @@ import JWT
 //            parents.post("login") { req -> EventLoopFuture<Response> in
 //                // Décoder directement le modèle Parent depuis le corps de la requête
 //                let parent = try req.content.decode(Parent.self)
-//
+//                
 //                // Appeler la fonction d'authentification
 //                return authenticateParent(req: req, parent: parent)
 //            }
@@ -156,7 +157,7 @@ import JWT
 //                    response.headers.add(name: .contentType, value: "text/plain; charset=utf-8")
 //                    return req.eventLoop.future(response)
 //                }
-//
+//                
 //                // Comparer le mot de passe en texte clair (non recommandé)
 //                if storedParent.password == parent.password {
 //                    // Authentification réussie, renvoyer une réponse simple
