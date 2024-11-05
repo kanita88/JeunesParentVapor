@@ -5,8 +5,8 @@
 //  Created by Apprenant 172 on 04/11/2024.
 //
 
-import JWTKit
 import Vapor
+import JWTKit
 
 struct TokenSession: Content, Authenticatable, JWTPayload {
     
@@ -24,7 +24,7 @@ struct TokenSession: Content, Authenticatable, JWTPayload {
     }
 
     // Vérification du token pour s'assurer qu'il n'est pas expiré
-    func verify(using algorithm: some JWTKit.JWTAlgorithm) async throws {
-        try expiration.verifyNotExpired() // Vérification de l'expiration
+    func verify(using algorithm: some JWTAlgorithm) throws {
+        try expiration.verifyNotExpired()
     }
 }

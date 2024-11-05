@@ -25,8 +25,8 @@ import JWT
             //parents.get(use: index)
             //parents.post(use: create)
             
-            parents.post("login", use : login )
-            authGroup.post(use: create)
+            authGroup.post("login", use : login )
+            parents.post(use: create) //créer mdp haché
             token.get(use: index)
 
             
@@ -137,7 +137,7 @@ import JWT
         // Création du payload en fonction des informations du user
         let payload = try TokenSession(with: parent)
         // Création d'un token signé à partir du payload
-        let token = try await req.jwt.sign (payload)
+        let token = try await req.jwt.sign(payload)
         // Envoi du token à l'utilisateur sous forme de dictionnaire
         return ["token":token]
     }
