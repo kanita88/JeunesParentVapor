@@ -17,7 +17,7 @@ struct GrossesseController: RouteCollection {
         
         grossesses.group(":grossesseID") { grossesse in
             grossesse.get(use: getGrossesseByID)
-            grossesse.delete(use: delete)
+            grossesse.delete(use: deleteGrossesse)
             //grossesse.put(use: update)
         }
     }

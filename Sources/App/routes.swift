@@ -5,9 +5,21 @@ func routes(_ app: Application) throws {
     app.get { req async in
         "It works!"
     }
-
+    
     app.get("hello") { req async -> String in
-        "Hello, world!"
+        return "Hello, world!"
+    }
+
+    app.post("hello") { req async -> String in
+        return "Hello, POST!"
+    }
+    
+    app.put("hello") { req async -> String in
+        return "Hello, PUT!"
+    }
+
+    app.delete("hello") { req async -> String in
+        return "Hello, DELETE!"
     }
 
     try app.register(collection: TodoController())

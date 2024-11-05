@@ -1,5 +1,5 @@
 {
-  "originHash" : "d844477b03a3b618ee5f8e13ee09e40a752c5d6d1578b53e5a8ba496f81c7cee",
+  "originHash" : "5036ce8bca1f716b9c6c79ab75b88ce4b010ca370ce4a18c884b4a63420cb866",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -53,6 +53,24 @@
       "state" : {
         "revision" : "c1422fde19433fa9ded948f83a226291e9ac33a9",
         "version" : "4.7.0"
+      }
+    },
+    {
+      "identity" : "jwt",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/jwt.git",
+      "state" : {
+        "revision" : "8ce7280a77ca45711f1b08bc1abfac7a2bb9c97b",
+        "version" : "5.1.0"
+      }
+    },
+    {
+      "identity" : "jwt-kit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor/jwt-kit.git",
+      "state" : {
+        "revision" : "02a0fa600eee1bdc892013d62fc795fc623a5cc3",
+        "version" : "5.1.0"
       }
     },
     {
@@ -125,6 +143,15 @@
       "state" : {
         "revision" : "cd142fd2f64be2100422d658e7411e39489da985",
         "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-certificates",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-certificates.git",
+      "state" : {
+        "revision" : "1fbb6ef21f1525ed5faf4c95207b9c11bea27e94",
+        "version" : "1.6.1"
       }
     },
     {
