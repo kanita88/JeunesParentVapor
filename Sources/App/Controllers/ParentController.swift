@@ -29,6 +29,7 @@ import JWT
             parents.post(use: create) //créer mdp haché et envoi token
             token.get(use: index) // il faut le token pour se connecter à index
             //authGroup.get(use: index)
+            authGroup.get("profile", use: profile)
 
             
             parents.group("byemail") { parent in
@@ -139,9 +140,18 @@ import JWT
         let payload = try TokenSession(with: parent)
         // Création d'un token signé à partir du payload
         let token = try await req.jwt.sign(payload)
+        // Utilisation de "nom d'utilisateur" comme valeur par défaut si le prénom est nil
+        let firstName = parent.prenom ?? "Utilisateur"
         // Envoi du token à l'utilisateur sous forme de dictionnaire
-        return ["token":token]
+        return ["token":token, "message": "Bonjour, \(firstName) !", "firstName": firstName]
     }
+    
+        @Sendable
+        func profile(req: Request) async throws -> [String: String] {
+            let parent = try req.auth.require(ParentUser.self)
+            let firstName = parent.prenom ?? "Utilisateur"
+            return ["prenom": firstName]
+        }
 }
 
 //    @Sendable
