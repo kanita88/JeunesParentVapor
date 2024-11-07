@@ -9,6 +9,7 @@ import Fluent
 import Vapor
 import FluentSQL
 import JWT
+import JWTDecode
 
 struct ParentController: RouteCollection {
     func boot(routes: any Vapor.RoutesBuilder) throws {
@@ -148,14 +149,24 @@ struct ParentController: RouteCollection {
     
     @Sendable
     func profile(_ req: Request) async throws -> [String: String] {
-        // Récupérer l'utilisateur authentifié
-        let parent = try req.auth.require(ParentUser.self)
+        // Récupérer le token JWT de l'en-tête Authorization
+        guard let token = req.headers.bearerAuthorization?.token else {
+            throw Abort(.unauthorized, reason: "Token manquant dans l'en-tête Authorization.")
+        }
         
-        // Récupère le prénom et l'ID utilisateur
-        let firstName = parent.prenom ?? "Utilisateur"
-        let userId = parent.id?.uuidString ?? "ID non disponible"
-        
-        // Renvoie les informations de profil
-        return ["prenom": firstName, "id": userId]
+        do {
+            // Décoder le token JWT
+            let jwt = try decode(jwt: token)
+            
+            // Extraire les informations du payload
+            let parentId = jwt.claim(name: "parentId").string ?? "ID non disponible"
+            let prenom = jwt.claim(name: "prenom").string ?? "Utilisateur"
+            
+            // Retourner les informations de profil sous forme de dictionnaire `[String: String]`
+            return ["parentId": parentId, "prenom": prenom]
+        } catch {
+            print("Erreur lors du décodage du token JWT : \(error)")
+            throw Abort(.unauthorized, reason: "Token JWT invalide.")
+        }
     }
 }

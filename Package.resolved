@@ -1,5 +1,5 @@
 {
-  "originHash" : "b7a13b48e259daaadaa03169c76f3a761c73f9a48273ef8134a16099c4031804",
+  "originHash" : "a201a894f09157de5f35fad0910090726e102758a3b7703233591694c19b6342",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -80,6 +80,15 @@
       "state" : {
         "revision" : "02a0fa600eee1bdc892013d62fc795fc623a5cc3",
         "version" : "5.1.0"
+      }
+    },
+    {
+      "identity" : "jwtdecode.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/auth0/JWTDecode.swift",
+      "state" : {
+        "revision" : "1e153ef009969543191970c66b7c60163c0b4a65",
+        "version" : "3.2.0"
       }
     },
     {

@@ -16,11 +16,13 @@ struct TokenSession: Content, Authenticatable, JWTPayload {
     // Données du token
     var expiration: ExpirationClaim
     var parentId: UUID
+    var prenom: String
 
     // Initialisation avec un utilisateur
     init(with parent: ParentUser) throws {
         self.parentId = try parent.requireID()
         self.expiration = ExpirationClaim(value: Date().addingTimeInterval(expirationTime))
+        self.prenom = parent.prenom ?? "Utilisateur"
     }
 
     // Vérification du token pour s'assurer qu'il n'est pas expiré
