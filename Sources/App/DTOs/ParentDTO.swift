@@ -11,4 +11,6 @@ import Vapor
 struct ParentDTO: Content {
     var id: UUID?
     var email: String
+    var nom: String?
+    var prenom: String?
 }
