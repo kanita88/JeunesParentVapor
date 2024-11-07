@@ -3,6 +3,7 @@ import Fluent
 import FluentMySQLDriver
 import Vapor
 import JWT
+import Gatekeeper
 
 // configures your application
 public func configure(_ app: Application) async throws {
@@ -30,6 +31,10 @@ public func configure(_ app: Application) async throws {
     // Add the CORS middleware to the application
     app.middleware.use(corsMiddleware)
     
+    // Configurer Gatekeeper dans Vapor
+    app.caches.use (.memory)
+    app.gatekeeper.config = .init(maxRequests: 100, per: .minute)
+    app.middleware.use (GatekeeperMiddleware())
     
     // Récupération de la clé secrète depuis les variables d'environnement
     guard let secret = Environment.get("SECRET_KEY"), !secret.isEmpty else {
