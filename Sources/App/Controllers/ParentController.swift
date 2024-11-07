@@ -10,53 +10,55 @@ import Vapor
 import FluentSQL
 import JWT
 
-    struct ParentController: RouteCollection {
-        func boot(routes: any Vapor.RoutesBuilder) throws {
-            let parents = routes.grouped ("parents")
-            
-            let basicAuthMiddleware = ParentUser.authenticator()
-            let guardAuthMiddleware = ParentUser.guardMiddleware()
-            let authGroup = parents.grouped(basicAuthMiddleware, guardAuthMiddleware)
-            
-            let tokenAuthMiddleware = TokenSession.authenticator()
-            let guardTokenMiddleware = TokenSession.guardMiddleware()
-            let token = parents.grouped(tokenAuthMiddleware, guardTokenMiddleware)
-            
-            //parents.get(use: index)
-            //parents.post(use: create)
-            
-            authGroup.post("login", use : login )
-            parents.post(use: create) //créer mdp haché et envoi token
-            token.get(use: index) // il faut le token pour se connecter à index
-            //authGroup.get(use: index)
-            authGroup.get("profile", use: profile)
-
-            
-            parents.group("byemail") { parent in
-                parent.get(":email" ,use: getParentByEmail)
-            }
-            
-            parents.group(":parentID") { parent in
-                parent.get(use: getParentByID)
-                parent.delete(use: delete)
-                parent.put(use: update)
-            }
-            
-//            parents.post("login") { req -> EventLoopFuture<Response> in
-//                // Décoder directement le modèle Parent depuis le corps de la requête
-//                let parent = try req.content.decode(Parent.self)
-//                
-//                // Appeler la fonction d'authentification
-//                return authenticateParent(req: req, parent: parent)
-//            }
+struct ParentController: RouteCollection {
+    func boot(routes: any Vapor.RoutesBuilder) throws {
+        let parents = routes.grouped ("parents")
+        
+        let basicAuthMiddleware = ParentUser.authenticator()
+        let guardAuthMiddleware = ParentUser.guardMiddleware()
+        let authGroup = parents.grouped(basicAuthMiddleware, guardAuthMiddleware)
+        
+        let tokenAuthMiddleware = TokenSession.authenticator()
+        let guardTokenMiddleware = TokenSession.guardMiddleware()
+        let tokenGroup = parents.grouped(tokenAuthMiddleware, guardTokenMiddleware)
+        
+        //parents.get(use: index)
+        //parents.post(use: create)
+        
+        authGroup.post("login", use : login )
+        parents.post(use: create) //créer mdp haché et envoi token
+        
+        tokenGroup.get(use: index) // il faut le token pour se connecter à index
+        tokenGroup.get("profile", use: profile)
+        
+        //authGroup.get(use: index)
+        
+        
+        parents.group("byemail") { parent in
+            parent.get(":email" ,use: getParentByEmail)
         }
-
+        
+        parents.group(":parentID") { parent in
+            parent.get(use: getParentByID)
+            parent.delete(use: delete)
+            parent.put(use: update)
+        }
+        
+        //            parents.post("login") { req -> EventLoopFuture<Response> in
+        //                // Décoder directement le modèle Parent depuis le corps de la requête
+        //                let parent = try req.content.decode(Parent.self)
+        //
+        //                // Appeler la fonction d'authentification
+        //                return authenticateParent(req: req, parent: parent)
+        //            }
+    }
+    
     @Sendable
     func index(req: Request) async throws -> [ParentDTO] {
         let parents = try await ParentUser.query(on: req.db).all()
         return parents.map { $0.toDTO() }
-        }
-
+    }
+    
     @Sendable
     func create(req: Request) async throws -> ParentDTO {
         let parent = try req.content.decode(ParentUser.self)
@@ -70,7 +72,7 @@ import JWT
         return parent.toDTO()
     }
     
-
+    
     @Sendable
     func getParentByID(req: Request) async throws -> ParentUser {
         guard let parent = try await
@@ -79,7 +81,7 @@ import JWT
         }
         return parent
     }
-
+    
     @Sendable
     func getParentByEmail(req: Request) async throws -> ParentUser {
         guard let email = req.parameters.get("email") else {
@@ -97,7 +99,7 @@ import JWT
         }
         throw Abort(.internalServerError, reason: "La base de données n'est pas SQL.")
     }
-
+    
     @Sendable
     func update(req: Request) async throws -> ParentUser {
         guard let parentIDString = req.parameters.get ("parentID"),
@@ -119,7 +121,7 @@ import JWT
         try await parent.save(on: req.db)
         return parent
     }
-
+    
     @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
         guard let parent = try await
@@ -130,57 +132,30 @@ import JWT
         try await parent.delete(on: req.db)
         return.noContent
     }
-
+    
     @Sendable
-    func login(req: Request) async throws -> [String:String] {
-        
-        // Récupération des logins/mdp
+    func login(req: Request) async throws -> [String: String] {
+        // Authentifie l'utilisateur avec l'authentification de base
         let parent = try req.auth.require(ParentUser.self)
-        // Création du payload en fonction des informations du user
+        // Crée le payload du token JWT
         let payload = try TokenSession(with: parent)
-        // Création d'un token signé à partir du payload
+        // Génère le token JWT signé
         let token = try await req.jwt.sign(payload)
-        // Utilisation de "nom d'utilisateur" comme valeur par défaut si le prénom est nil
+        // Récupère le prénom pour le message de bienvenue
         let firstName = parent.prenom ?? "Utilisateur"
-        // Envoi du token à l'utilisateur sous forme de dictionnaire
-        return ["token":token, "message": "Bonjour, \(firstName) !", "firstName": firstName]
+        return ["token": token, "prenom": firstName]
     }
     
-        @Sendable
-        func profile(req: Request) async throws -> [String: String] {
-            let parent = try req.auth.require(ParentUser.self)
-            let firstName = parent.prenom ?? "Utilisateur"
-            return ["prenom": firstName]
-        }
+    @Sendable
+    func profile(_ req: Request) async throws -> [String: String] {
+        // Récupérer l'utilisateur authentifié
+        let parent = try req.auth.require(ParentUser.self)
+        
+        // Récupère le prénom et l'ID utilisateur
+        let firstName = parent.prenom ?? "Utilisateur"
+        let userId = parent.id?.uuidString ?? "ID non disponible"
+        
+        // Renvoie les informations de profil
+        return ["prenom": firstName, "id": userId]
+    }
 }
-
-//    @Sendable
-//    func authenticateParent(req: Request, parent: Parent) -> EventLoopFuture<Response> {
-//        // Chercher le parent dans la base de données
-//        return Parent.query(on: req.db)
-//            .filter(\.$email == parent.email)
-//            .first()
-//            .flatMap { storedParent in
-//                // Vérifier si le parent existe
-//                guard let storedParent = storedParent else {
-//                    let response = Response(status: .unauthorized, body: .init(string: "Parent non trouvé"))
-//                    response.headers.add(name: .contentType, value: "text/plain; charset=utf-8")
-//                    return req.eventLoop.future(response)
-//                }
-//                
-//                // Comparer le mot de passe en texte clair (non recommandé)
-//                if storedParent.password == parent.password {
-//                    // Authentification réussie, renvoyer une réponse simple
-//                    let response = Response(status: .ok, body: .init(string: "Authentification réussie pour (storedParent.email)"))
-//                    response.headers.add(name: .contentType, value: "text/plain; charset=utf-8")
-//                    return req.eventLoop.future(response)
-//                } else {
-//                    let response = Response(status: .unauthorized, body: .init(string: "Mot de passe incorrect"))
-//                    response.headers.add(name: .contentType, value: "text/plain; charset=utf-8")
-//                    return req.eventLoop.future(response)
-//                }
-//            }
-//        }
-
-
-

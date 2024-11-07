@@ -10,9 +10,9 @@ import JWTKit
 
 struct TokenSession: Content, Authenticatable, JWTPayload {
     
-    // Temps d'expiration en secondes (1 minutes)
-    var expirationTime: TimeInterval = 60*1
-
+    // Temps d'expiration en secondes
+    var expirationTime: TimeInterval = 60*15
+ 
     // Données du token
     var expiration: ExpirationClaim
     var parentId: UUID

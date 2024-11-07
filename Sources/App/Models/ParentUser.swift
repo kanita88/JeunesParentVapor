@@ -7,6 +7,7 @@
 
 import Vapor
 import Fluent
+import JWT
 
 final class ParentUser: Model, Content, @unchecked Sendable {
     
@@ -64,3 +65,5 @@ final class ParentUser: Model, Content, @unchecked Sendable {
             try Bcrypt.verify(password, created: self.password)
         }
     }
+
+    
